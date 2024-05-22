@@ -1,6 +1,6 @@
 #TODO walidacja
 #TODO obsługa błędów
-from flask import Flask, url_for, render_template, g, request, redirect, session
+from flask import Flask, url_for, render_template, g, request, redirect, session, jsonify
 import sqlite3
 from hashlib import sha256
 app = Flask(__name__)
@@ -102,10 +102,22 @@ class Posilek:
         self.calories = calories
         self.ingredients = ingredients
 
+def checksession(fn):
+    def decorated_function(*args,**kwargs):
+        db=get_db()
+        sql_command="select nazwa_identyfikacyjna , Hasło from Administrator where nazwa_identyfikacyjna=?;"
+        db_data=db.execute(sql_command,[session["username"]]).fetchone()
+
+        if(db_data!=None and session["passwd"]==sha256("123".encode('utf-8')).hexdigest()):
+            return fn(*args,**kwargs) 
+        else:
+            return redirect(url_for('singin',))
+    decorated_function.__name__=fn.__name__
+    return decorated_function
 
 @app.route('/')
+@checksession
 def index():
-
     a1 = Posilek("Zupa",20000,['Marchew', 'Kości', 'Kostka rosołowa'])
     a2 = Posilek("Zupa",20000,['Twaróg', 'Kości', 'Kostka rosołowa'])
     info = [a1,a1,a1,a2,a2,a1,a2,a1,a2]
@@ -114,8 +126,8 @@ def index():
 
 
 @app.route('/skl')
+@checksession
 def skladniki():
-
     db = get_db()
     sql = "select * from Skladnik;"
     cursor = db.execute(sql)
@@ -132,6 +144,7 @@ def searchforid(name):
 
 
 @app.route('/wpr_po', methods=['GET','POST'])
+@checksession
 def wpr():
     db=get_db()
     if(request.method == 'POST'):
@@ -153,8 +166,8 @@ def wpr():
         return render_template('wprowadz_posilek.html',ingredients=cursor.fetchall())
 
 @app.route('/wpr_skl', methods=['GET','POST'])
+@checksession
 def wpr_skl():
-
     db= get_db()
     if request.method == 'POST':
 
@@ -177,19 +190,47 @@ def singin():
         user=request.form['user']
         passwd=request.form['password']
         sql_command="select nazwa_identyfikacyjna , Hasło from Administrator where nazwa_identyfikacyjna=?;"
-        db_data=db.execute(sql,)
-        session["username"]=user
-        session["passwd"]=passwd
-        return redirect(url_for("index"))
+        db_data=db.execute(sql_command,[user]).fetchone()
+
+        # print("123".encode('utf-8'))
+        # print(b'123')
+        # print(db_data['Hasło'])
+        # print(sha256("123".encode('utf-8')).hexdigest())
+        print(db_data==None)
+        if(db_data!=None and db_data['Hasło']==sha256(passwd.encode('utf-8')).hexdigest()):
+            session["username"]=user
+            session["passwd"]=passwd
+            return redirect(url_for("index"))
+        else:
+            return render_template("/logowanie.html",info="Nazwa albo hało niepoprawne.")
+
+
+@app.route('/api')
+def api():
+        sql_command="select * from Skladnik;"
+        db=get_db()
+        cursor=db.execute(sql_command)
+        data=cursor.fetchall()
+        data_response=[]
+        for item in data:
+            collection={}
+            collection['id']=item[0]
+            collection['nazwa']=item[1]
+            collection['kalorie na 100 gram']=item[2]
+            collection['dodatkowe']=item[3]
+            data_response.append(collection)
+        return jsonify(data_response)
+
+
+
+
+
 
 
 
 
 if __name__=='__main__':
     app.run(port=8031,debug=True)
-
-
-
 
 
 
