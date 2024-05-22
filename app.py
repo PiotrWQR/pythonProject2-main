@@ -1,10 +1,10 @@
 #TODO walidacja
 #TODO obsługa błędów
-from flask import Flask, url_for, render_template, g, request, redirect
+from flask import Flask, url_for, render_template, g, request, redirect, session
 import sqlite3
 from hashlib import sha256
 app = Flask(__name__)
-
+Flask.secret_key="22222"
 
 def get_ingridients(id):
     sql="select * from Skladnik where id=?;"
@@ -96,7 +96,6 @@ def get_ingredients(id):
     
     
 
-
 class Posilek:
     def __init__(self, name, calories, ingredients):
         self.name = name
@@ -174,7 +173,15 @@ def singin():
     if(request.method=="GET"):
         return render_template("/logowanie.html")
     else:
+        db= get_db()
+        user=request.form['user']
+        passwd=request.form['password']
+        sql_command="select nazwa_identyfikacyjna , Hasło from Administrator where nazwa_identyfikacyjna=?;"
+        db_data=db.execute(sql,)
+        session["username"]=user
+        session["passwd"]=passwd
         return redirect(url_for("index"))
+
 
 
 
