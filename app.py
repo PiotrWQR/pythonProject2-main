@@ -1,8 +1,8 @@
 #TODO walidacja
 #TODO obsługa błędów
-from flask import Flask, url_for, render_template, g, request
+from flask import Flask, url_for, render_template, g, request, redirect
 import sqlite3
-
+from hashlib import sha256
 app = Flask(__name__)
 
 
@@ -110,6 +110,7 @@ def index():
     a1 = Posilek("Zupa",20000,['Marchew', 'Kości', 'Kostka rosołowa'])
     a2 = Posilek("Zupa",20000,['Twaróg', 'Kości', 'Kostka rosołowa'])
     info = [a1,a1,a1,a2,a2,a1,a2,a1,a2]
+    info=[]
     return render_template('Wyswietlenie.html', info=info,get_ingridients=get_ingridients)
 
 
@@ -166,6 +167,14 @@ def wpr_skl():
         return render_template('wprowadz_skl.html',info='Dane zostały wprowadzone poprawnie')
     else:
         return render_template('wprowadz_skl.html',info='')
+
+
+@app.route("/logowanie",methods=["GET","POST"])
+def singin():
+    if(request.method=="GET"):
+        return render_template("/logowanie.html")
+    else:
+        return redirect(url_for("index"))
 
 
 
