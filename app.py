@@ -1,5 +1,6 @@
 #TODO walidacja
 #TODO obsługa błędów
+#TODO wprowadzanie posiłku
 from flask import Flask, url_for, render_template, g, request, redirect, session, jsonify
 import sqlite3
 from hashlib import sha256
@@ -105,13 +106,18 @@ class Posilek:
 def checksession(fn):
     def decorated_function(*args,**kwargs):
         db=get_db()
-        sql_command="select nazwa_identyfikacyjna , Hasło from Administrator where nazwa_identyfikacyjna=?;"
-        db_data=db.execute(sql_command,[session["username"]]).fetchone()
 
-        if(db_data!=None and session["passwd"]==sha256("123".encode('utf-8')).hexdigest()):
+        sql_command="select nazwa_identyfikacyjna , Hasło from Administrator where nazwa_identyfikacyjna=?;"
+        if "username" in session:
+            db_data=db.execute(sql_command,[session["username"]]).fetchone()
+        else:
+            return redirect(url_for('singin'))
+
+        print(session)
+        if(db_data!=None and db_data['Hasło']==sha256(session["passwd"].encode('utf-8')).hexdigest()):
             return fn(*args,**kwargs) 
         else:
-            return redirect(url_for('singin',))
+            return redirect(url_for('singin'))
     decorated_function.__name__=fn.__name__
     return decorated_function
 
@@ -194,7 +200,7 @@ def singin():
 
         # print("123".encode('utf-8'))
         # print(b'123')
-        # print(db_data['Hasło'])
+        #print(db_data['Hasło'])
         # print(sha256("123".encode('utf-8')).hexdigest())
         print(db_data==None)
         if(db_data!=None and db_data['Hasło']==sha256(passwd.encode('utf-8')).hexdigest()):
