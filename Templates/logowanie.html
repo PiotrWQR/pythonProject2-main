@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Licznik kalori</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+
+</head>
+<body>
+
+    <div class="row d-flex align-items-center form">
+        <form action="{{ url_for('wpr_skl') }}" method="POST" >
+            <div class="mx-auto col-lg-3 col-md-6 bg-warning rounded-3 row">
+        <label>Nazwa</label>
+        <input type="text" class="col-12 form-control" name="nazwa">
+        <label class="col-4">Kalorie: </label>
+        <input type="number" class="col-8 form-control" name="kalorie">
+        
+        
+        <!-- <label class="col-4">Jednostka: </label> -->
+        
+        <input type="Potwierdź" class="col-6">
+        </div>
+        </form>
+        <p>{{ info }}</p>
+        </div>
+
+</div>
+</body>
+</html>

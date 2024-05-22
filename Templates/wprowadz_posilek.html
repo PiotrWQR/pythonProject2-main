@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row form">
+
+<form method="POST" action="{{ url_for('wpr')}}">
+
+<div class=" col-4 d-flex align-items-center row mx-auto text-center bg-warning rounded-2">
+    <span class="d-flex align-items-center"><label for="nazwa" class="col-6  float-start">Posiłek: </label><input class="form-control col-6 float-start w-50 " type="text" name="nazwa"></span>
+    <br>
+   <span class="col-12 " id="contener"> </span> 
+<select class="col-12 form-select" id="sel">
+    {% for item in ingredients %}
+    <option value="{{item.nazwa}}" >{{item.nazwa}}</option>
+    {% endfor %}
+</select>
+<input type="text" name="ingredients" id="mt" value="">
+    <!--<label class="col-4"></label>
+    <input type="number" name="kalorie" class="form-control col-8">
+     <span class="er "></span>-->
+<input type="button"  class="col-6" id="addingridient" value="Dodaj składnik">
+<input class="col-6" type="submit">
+</div>
+
+</form>
+
+</div>
+
+<script>
+let btn=document.querySelector("#addingridient")
+
+let addingridient=()=>
+{
+    let mt=document.querySelector('#mt');
+
+    let ing=document.createElement('p');
+    let contener=document.querySelector('#contener')
+    let sel=document.querySelector('#sel')
+    ing.innerHTML=sel.value
+     mt.value+=sel.value+', ';
+    contener.appendChild(ing);
+    console.log(ing)
+
+}
+btn.addEventListener("click",addingridient)
+
+</script>
+{% endblock %}
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Licznik kalori</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+
+</head>
+<body>
+
+    <ul class="bg-info border-1  nav">
+        <li class="navbar-item border nav-link"><a href="{{ url_for('index') }}" >Główna</a></li>
+        <li class="navbar-item border nav-link"><a href="{{ url_for('wpr') }}" >Wprowadzanie posiłku</a></li>
+        <li class="navbar-item border nav-link"><a href="{{ url_for('wpr_skl') }}" >Wprowadzenie składnika</a></li>
+        <li class="navbar-item border nav-link"><a href="{{ url_for('skladniki') }}" >Składniki</a></li>
+    </ul>
+
+{% block content %}
+{% endblock %}
+
+</div>
+</body>
+</html>

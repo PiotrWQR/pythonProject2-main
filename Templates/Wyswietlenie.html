@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row rzad">
+{% for item in info %}
+<div class="col-12 bg-secondary-subtle  rounded-3 ">
+    <span class="col-4 float-start">Posiłek: {{ item.name }}</span>
+    <span class="col-2 float-start">{{item.calories}} cal</span>
+<ul class="col-3 float-start">
+    {% for skladnik in item.ingredients %}
+     <li>{{skladnik}}</li>
+    {% endfor %}
+</ul>
+<span class="er "></span>
+</div>
+{% endfor %}
+
+
+</div>
+{% endblock %}
